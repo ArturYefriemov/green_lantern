@@ -1,5 +1,5 @@
 class Cat:
-    
+
     food = {'fodder': 10, 'apple': 5, 'milk': 2}
 
     def __init__(self, age):
@@ -61,20 +61,7 @@ class Cheetah(Cat):
 
 
 class Wall:
-    """
-    * Implement class Wall which receives such parameters: width and height
-
-    * Implement method wall_square which return result of simple square formula of rectangle
-
-    * Implement method number_of_rolls_of_wallpaper which receives such parameters: roll_width_m, roll_length_m
-      (_m in the parameters name means meters) return number of rolls of wallpaper
-
-      Example:
-          count of lines in roll eq roll length in meters divide height of the wall (use rounding down)
-          count of lines eq width of the wall divide roll width in meters
-          number of rolls of wallpaper eq count of lines divide  count of lines in roll
-    """
-
+ 
     def __init__(self, width, height):
         self.width = width
         self.height = height
