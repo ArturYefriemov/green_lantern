@@ -1,4 +1,5 @@
 class Cat:
+    
     food = {'fodder': 10, 'apple': 5, 'milk': 2}
 
     def __init__(self, age):
