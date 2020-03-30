@@ -47,12 +47,14 @@ class Robot:
 
     def check_robot_location(self):
         if self.x > self.asteroid.x or self.x < 0 or self.y > self.asteroid.y or self.y < 0:
-            raise MovementError(self)
+            raise MovementError()
 
 
 class MissAsteroidError(Exception):
-    pass
+    def __str__(self):
+        return "Robot miss asteroid"
 
 
 class MovementError(Exception):
-    pass
+    def __str__(self):
+        return "Robot fell down from asteroid"
