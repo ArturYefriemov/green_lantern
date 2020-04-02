@@ -50,6 +50,7 @@ class Robot:
             raise MovementError()
 
 
+
 class MissAsteroidError(Exception):
     def __str__(self):
         return "Robot miss asteroid"
