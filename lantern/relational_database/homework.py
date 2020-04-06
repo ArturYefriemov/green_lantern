@@ -1,4 +1,4 @@
-from typing import List
+import init_database
 
 
 def task_1_add_new_record_to_db(con) -> None:
@@ -19,7 +19,12 @@ def task_1_add_new_record_to_db(con) -> None:
     Returns: 92 records
 
     """
-    pass
+
+    cur = con.cursor()
+    cur.execute("""INSERT INTO Customers(CustomerName,ContactName,Address,City,PostalCode,Country) 
+                                 VALUES('Thomas', 'David', 'Some Address', 'London', '774', 'Singapore')""")
+    con.commit()
+    return cur.fetchall()
 
 
 def task_2_list_all_customers(cur) -> list:
@@ -32,7 +37,9 @@ def task_2_list_all_customers(cur) -> list:
     Returns: 91 records
 
     """
-    pass
+    sql = '''SELECT * FROM Customers'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_3_list_customers_in_germany(cur) -> list:
@@ -44,21 +51,34 @@ def task_3_list_customers_in_germany(cur) -> list:
 
     Returns: 11 records
     """
-    pass
+    sql = """
+    SELECT * FROM Customers WHERE Country LIKE 'G%ny'
+    """
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_4_update_customer(con):
     """
     Update first customer's name (Set customername equal to  'Johnny Depp')
     Args:
-        cur: psycopg cursor
+        con: psycopg cursor
 
     Returns: 91 records with updated customer
 
     """
-    pass
+    sql = '''UPDATE Customers
+             SET CustomerName = 'Johnny Depp'
+                   WHERE CustomerID = (
+                                       SELECT min(CustomerID) from Customers
+                                      )
+          '''
+    cur = con.cursor()
+    cur.execute(sql)
+    con.commit()
+    return cur.fetchall()
 
-
+    
 def task_5_delete_the_last_customer(con) -> None:
     """
     Delete the last customer
@@ -66,7 +86,13 @@ def task_5_delete_the_last_customer(con) -> None:
     Args:
         con: psycopg connection
     """
-    pass
+    sql = ''' DELETE FROM Customers 
+                         WHERE CustomerID = (
+                                             SELECT max(CustomerID) from Customers
+                                             ) '''
+    cur = con.cursor()
+    cur.execute(sql)
+    con.commit()
 
 
 def task_6_list_all_supplier_countries(cur) -> list:
@@ -79,7 +105,10 @@ def task_6_list_all_supplier_countries(cur) -> list:
     Returns: 29 records
 
     """
-    pass
+    sql = ''' SELECT DISTINCT Country FROM Suppliers
+              ORDER BY Country'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_7_list_supplier_countries_in_desc_order(cur) -> list:
@@ -92,7 +121,10 @@ def task_7_list_supplier_countries_in_desc_order(cur) -> list:
     Returns: 29 records in descending order
 
     """
-    pass
+    sql = ''' SELECT DISTINCT Country FROM Suppliers
+              ORDER BY Country DESC'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_8_count_customers_by_city(cur):
@@ -105,7 +137,12 @@ def task_8_count_customers_by_city(cur):
     Returns: 69 records in descending order
 
     """
-    pass
+    sql = '''SELECT City, count(CustomerID) count_id FROM Customers 
+             GROUP BY City 
+             ORDER BY City'''
+
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_9_count_customers_by_country_with_than_10_customers(cur):
@@ -117,7 +154,11 @@ def task_9_count_customers_by_country_with_than_10_customers(cur):
 
     Returns: 3 records
     """
-    pass
+    sql = '''SELECT Country, count(CustomerID) CountOfCustomers FROM Customers
+             GROUP BY Country
+             HAVING count(CustomerID) > 10 '''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_10_list_first_10_customers(cur):
@@ -126,7 +167,10 @@ def task_10_list_first_10_customers(cur):
 
     Results: 10 records
     """
-    pass
+    sql = '''SELECT * FROM Customers 
+                                    WHERE ROWNUM < 11'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_11_list_customers_starting_from_11th(cur):
@@ -138,7 +182,10 @@ def task_11_list_customers_starting_from_11th(cur):
 
     Returns: 11 records
     """
-    pass
+    sql = '''SELECT * FROM Customers
+                                    WHERE CustomerID >= 11 '''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_12_list_suppliers_from_specified_countries(cur):
@@ -150,7 +197,10 @@ def task_12_list_suppliers_from_specified_countries(cur):
 
     Returns: 8 records
     """
-    pass
+    sql = '''SELECT * FROM Suppliers 
+                                    WHERE Country in('USA','UK','Japan');'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_13_list_products_from_sweden_suppliers(cur):
@@ -162,7 +212,11 @@ def task_13_list_products_from_sweden_suppliers(cur):
 
     Returns: 3 records
     """
-    pass
+    sql = '''SELECT * FROM Products p JOIN Suppliers s 
+                                        ON p.SupplierID = s.SupplierID
+                    WHERE Country LIKE "Sw%n"'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_14_list_products_with_supplier_information(cur):
@@ -174,7 +228,10 @@ def task_14_list_products_with_supplier_information(cur):
 
     Returns: 77 records
     """
-    pass
+    sql = '''SELECT * FROM Products p LEFT JOIN Supplier s 
+                                             ON p.SupplierID=s.SupplierID'''
+    cur.execute(sql)
+    return cur.fetchall()
 
 
 def task_15_list_customers_with_any_order_or_not(cur):
@@ -186,7 +243,11 @@ def task_15_list_customers_with_any_order_or_not(cur):
 
     Returns: 213 records
     """
-    pass
+    sql = '''SELECT * FROM Customers c LEFT JOIN Orders o 
+                                              ON c.CustomerID = o.CustomerID'''
+    cur.execute(sql)
+    return cur.fetchall()
+
 
 
 def task_16_match_all_customers_and_suppliers_by_country(cur):
@@ -198,4 +259,10 @@ def task_16_match_all_customers_and_suppliers_by_country(cur):
 
     Returns: 194 records
     """
-    pass
+    sql = '''SELECT * FROM Customers c FULL JOIN Suppliers s 
+                                              ON c.Country = s.Country '''
+    cur.execute(sql)
+    return cur.fetchall()
+
+
+
