@@ -1,3 +1,4 @@
+
 import pytest
 from lonely_robot import Robot, Asteroid, MissAsteroidError, MovementError
 
