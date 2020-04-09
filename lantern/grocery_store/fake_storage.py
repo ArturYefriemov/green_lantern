@@ -1,11 +1,12 @@
 from itertools import count
-from store_app import NoSuchUserError
+from store_app import NoSuchUserError, NoSuchStoreID
 
 
 class FakeStorage:
     def __init__(self):
         self._goods = FakeGoods()
         self._users = FakeUsers()
+        self._store = FakeStore()
 
     @property
     def users(self):
@@ -14,6 +15,10 @@ class FakeStorage:
     @property
     def goods(self):
         return self._goods
+
+    @property
+    def store(self):
+        return self._store
 
 
 class FakeUsers:
@@ -55,6 +60,30 @@ class FakeGoods:
     def update_goods_by_id(self, goods_id, goods):
         if goods_id in goods:
             self._goods[goods_id].update(goods)
+
+
+class FakeStore:
+    def __init__(self):
+        self._store = {}
+        self._id_counter = count(1)
+
+    def add(self, store):
+        store_id = next(self._id_counter)
+        self._store[store_id] = store
+        return store_id
+
+    def get_store_by_id(self, store_id):
+        try:
+            return self._store[store_id]
+        except KeyError:
+            raise NoSuchStoreID(store_id)
+
+    def update_store_by_id(self, store_id, store):
+        if store_id in self._store:
+            self._store[store_id] = store
+        else:
+            raise NoSuchStoreID(store_id)
+
 
 
 

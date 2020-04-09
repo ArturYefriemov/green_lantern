@@ -8,11 +8,21 @@ class NoSuchUserError(Exception):
         self.message = f'No such user_id {user_id}'
 
 
+class NoSuchStoreID(Exception):
+    def __init__(self, store_id):
+        self.message = f'No such store_id {store_id}'
+
+
 app = Flask(__name__)
 
 
+@app.errorhandler(NoSuchStoreID)
+def store_error_handler(e):
+    return jsonify({'error': e.message}), 404
+
+
 @app.errorhandler(NoSuchUserError)
-def my_error_handler(e):
+def user_error_handler(e):
     return jsonify({'error': e.message}), 404
 
 
@@ -56,3 +66,25 @@ def update_goods(goods_id):
     db = inject.instance('DB')
     db.goods.update_goods_by_id(goods_id, request.json)
     return jsonify({'successfully_updated': 1})
+
+
+@app.route('/store', methods=['POST'])
+def create_store():
+    db = inject.instance('DB')
+    store_id = db.store.add(request.json)
+    return jsonify({'store_id': store_id}), 201
+
+
+@app.route('/store/<int:store_id>')
+def get_store(store_id):
+    db = inject.instance('DB')
+    store = db.store.get_store_by_id(store_id)
+    return jsonify(store)
+
+
+@app.route('/store/<int:store_id>', methods=['PUT'])
+def update_store(store_id):
+    db = inject.instance('DB')
+    db.store.update_store_by_id(store_id, request.json)
+    return jsonify({'status': 'success'})
+

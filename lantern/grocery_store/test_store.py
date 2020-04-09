@@ -73,18 +73,18 @@ class TestUsers(Initializer):
 class TestGoods(Initializer):
     def test_create_goods(self):
         resp = self.client.post(
-                '/goods',
-                json=[{'name': 'Chocolate_bar', 'price': 10},
-                      {'name': 'Snickers', 'price': 19},
-                      {'name': 'Mars', 'price': 9.5},
-                      {'name': 'Kinder_Chocolate', 'price': 26},
-                      {'name': 'Nesquik', 'price': 25},
-                      {'name': 'Bounty', 'price': 11.2},
-                      {'name': 'Twix', 'price': 9.3},
-                      {'name': 'Milky_Way', 'price': 10},
-                      {'name': 'Milka&Daim', 'price': 20},
-                      {'name': 'M&Ms', 'price': 21}]
-            )
+            '/goods',
+            json=[{'name': 'Chocolate_bar', 'price': 10},
+                  {'name': 'Snickers', 'price': 19},
+                  {'name': 'Mars', 'price': 9.5},
+                  {'name': 'Kinder_Chocolate', 'price': 26},
+                  {'name': 'Nesquik', 'price': 25},
+                  {'name': 'Bounty', 'price': 11.2},
+                  {'name': 'Twix', 'price': 9.3},
+                  {'name': 'Milky_Way', 'price': 10},
+                  {'name': 'Milka&Daim', 'price': 20},
+                  {'name': 'M&Ms', 'price': 21}]
+        )
         assert resp.status_code == 201
         assert resp.json == {'goods_id': 1}
         resp = self.client.post(
@@ -116,11 +116,55 @@ class TestGoods(Initializer):
         assert resp.json == {'successfully_updated': 1}
 
 
+class TestStore(Initializer):
+    def test_create_store(self):
+        resp = self.client.post(
+            '/store',
+            json={'name': 'Mad Cow', 'location': 'Lviv', 'manager_id': 2}
+        )
+        assert resp.status_code == 201
+        assert resp.json == {'store_id': 1}
 
+        resp = self.client.post(
+            '/store',
+            json={'name': 'Mad Cow', 'location': 'Kiev', 'manager_id': 3}
+        )
+        assert resp.json == {'store_id': 2}
 
+    def test_successful_get_store(self):
+        resp = self.client.post(
+            '/store',
+            json={'name': 'Mad Cow', 'location': 'Lviv', 'manager_id': 2}
+        )
+        store_id = resp.json['store_id']
+        resp = self.client.get(f'/store/{store_id}')
+        assert resp.status_code == 200
+        assert resp.json == {'name': 'Mad Cow', 'location': 'Lviv', 'manager_id': 2}
 
+    def test_get_unexistent_store(self):
+        resp = self.client.get(f'/store/1')
+        assert resp.status_code == 404
+        assert resp.json == {'error': 'No such store_id 1'}
 
+    def test_successful_update_store(self):
+        resp = self.client.post(
+            '/store',
+            json={'name': 'Mad Cow', 'location': 'Lviv', 'manager_id': 2}
+        )
+        store_id = resp.json['store_id']
+        resp = self.client.put(
+            f'/store/{store_id}',
+            json={'name': 'Lazy Cat', 'location': 'Lviv', 'manager_id': 2}
+        )
+        assert resp.status_code == 200
+        assert resp.json == {'status': 'success'}
 
-
+    def test_unexistent_update_store(self):
+        resp = self.client.put(
+            f'/store/1',
+            json={'name': 'Lazy Cat', 'location': 'Lviv', 'manager_id': 2}
+        )
+        assert resp.status_code == 404
+        assert resp.json == {'error': 'No such store_id 1'}
 
 
