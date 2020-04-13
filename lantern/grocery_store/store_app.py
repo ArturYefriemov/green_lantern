@@ -67,7 +67,7 @@ def update_goods():
 @app.route('/store', methods=['POST'])
 def create_store():
     db = inject.instance('DB')
-    # db.users.get_user_by_id(request.json['manager_id'])
+    db.users.get_user_by_id(request.json['manager_id'])
     store_id = db.store.add(request.json)
     return jsonify({'store_id': store_id}), 201
 
@@ -82,7 +82,7 @@ def get_store(store_id):
 @app.route('/store/<int:store_id>', methods=['PUT'])
 def update_store(store_id):
     db = inject.instance('DB')
-    # db.users.get_user_by_id(request.json['manager_id'])
+    db.users.get_user_by_id(request.json['manager_id'])
     db.store.update_store_by_id(store_id, request.json)
     return jsonify({'status': 'success'})
 
