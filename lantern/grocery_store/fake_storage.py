@@ -50,16 +50,25 @@ class FakeGoods:
         self._id_counter = count(1)
 
     def add(self, goods):
-        goods_id = next(self._id_counter)
-        self._goods[goods_id] = goods
-        return goods_id
+        for good in goods:
+            good['id'] = next(self._id_counter)
+            self._goods[good['id']] = good
+        return len(goods)
 
-    def get_goods_by_id(self, goods_id):
-        return self._goods[goods_id]
+    def get_goods_by_id(self):
+        return [self._goods[good] for good in range(1, len(self._goods) + 1)]
 
-    def update_goods_by_id(self, goods_id, goods):
-        if goods_id in goods:
-            self._goods[goods_id].update(goods)
+    def update_goods(self, goods):
+        count_of_success_update = 0
+        list_error = []
+        for good in goods:
+            goods_id = good['id']
+            if goods_id in self._goods:
+                self._goods[goods_id] = good
+                count_of_success_update += 1
+            else:
+                list_error.append(goods_id)
+        return count_of_success_update, list_error
 
 
 class FakeStore:

@@ -17,10 +17,6 @@ app = Flask(__name__)
 
 
 @app.errorhandler(NoSuchStoreID)
-def store_error_handler(e):
-    return jsonify({'error': e.message}), 404
-
-
 @app.errorhandler(NoSuchUserError)
 def user_error_handler(e):
     return jsonify({'error': e.message}), 404
@@ -51,26 +47,27 @@ def update_user(user_id):
 def create_goods():
     db = inject.instance('DB')
     goods_id = db.goods.add(request.json)
-    return jsonify({'goods_id': goods_id}), 201
+    return jsonify({'numbers of items created': goods_id}), 201
 
 
-@app.route('/goods/<int:goods_id>')
-def get_goods(goods_id):
+@app.route('/goods')
+def get_goods():
     db = inject.instance('DB')
-    goods = db.goods.get_goods_by_id(goods_id)
+    goods = db.goods.get_goods_by_id()
     return jsonify(goods)
 
 
-@app.route('/goods/<int:goods_id>', methods=['PUT'])
-def update_goods(goods_id):
+@app.route('/goods', methods=['PUT'])
+def update_goods():
     db = inject.instance('DB')
-    db.goods.update_goods_by_id(goods_id, request.json)
-    return jsonify({'successfully_updated': 1})
+    successful_update, update_with_error = db.goods.update_goods(request.json)
+    return jsonify({'successfully_updated': successful_update, 'errors': {'No such id in goods': update_with_error}})
 
 
 @app.route('/store', methods=['POST'])
 def create_store():
     db = inject.instance('DB')
+    # db.users.get_user_by_id(request.json['manager_id'])
     store_id = db.store.add(request.json)
     return jsonify({'store_id': store_id}), 201
 
@@ -85,6 +82,7 @@ def get_store(store_id):
 @app.route('/store/<int:store_id>', methods=['PUT'])
 def update_store(store_id):
     db = inject.instance('DB')
+    # db.users.get_user_by_id(request.json['manager_id'])
     db.store.update_store_by_id(store_id, request.json)
     return jsonify({'status': 'success'})
 
