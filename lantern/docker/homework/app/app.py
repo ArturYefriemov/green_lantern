@@ -42,3 +42,4 @@ def get_app():
         print('Data GOODS written in data_base succesfully')
 
     return app
+

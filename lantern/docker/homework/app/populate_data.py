@@ -21,3 +21,4 @@ def get_goods():
         goods = [good for good in reader]
     return goods
 
+

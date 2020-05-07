@@ -30,3 +30,4 @@ class Good(db.Model):
     name = db.Column(db.String(), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
+
