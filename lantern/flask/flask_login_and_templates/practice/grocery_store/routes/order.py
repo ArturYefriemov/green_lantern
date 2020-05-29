@@ -21,4 +21,4 @@ def user_orders():
                 }
             order_list.append(orders_data)
 
-    return render_template('orders.html',name=user, orders=order)
+        return render_template('orders.html',name=user, orders=order)
