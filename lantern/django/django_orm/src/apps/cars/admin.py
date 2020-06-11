@@ -3,7 +3,12 @@ from django.contrib import admin
 # Register your models here.
 from django.utils.safestring import mark_safe
 
-from apps.cars.models import Color, CarModel, CarBrand
+from apps.cars.models import Car, Color, CarModel, CarBrand
+
+
+@admin.register(Car)
+class Car(admin.ModelAdmin):
+    list_display = ('name',)
 
 
 @admin.register(Color)

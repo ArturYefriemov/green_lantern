@@ -7,6 +7,7 @@ from common.models import BaseDateAuditModel
 
 
 class Color(models.Model):
+    color_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=32, unique=True)
 
     class Meta:
@@ -22,6 +23,7 @@ class Color(models.Model):
 
 
 class CarBrand(models.Model):
+    brand_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=32, unique=True)
     logo = models.ImageField(null=True, blank=False)
 
@@ -38,6 +40,7 @@ class CarBrand(models.Model):
 
 
 class CarModel(models.Model):
+    model_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
     brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE)
 
@@ -71,10 +74,17 @@ class Car(BaseDateAuditModel):
     slug = models.SlugField(max_length=75)
     number = models.CharField(max_length=16, unique=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True)
-    # dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars')
 
+    car_id = models.AutoField(primary_key=True)
+    color_id = models.ForeignKey(to='Color', on_delete=models.SET_NULL, null=True, blank=False)
+    model_id = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, blank=False)
+    dealer = models.ForeignKey(to='dealer.Dealer', on_delete=models.CASCADE, related_name='cars', null=True, blank=False)
     model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, blank=False)
     extra_title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Title second part'))
+    price = models.FloatField(null=False, blank=False)
+    doors = models.ImageField(blank=True, null=False)
+    fuel_type = models.CharField(max_length=30)
+    first_registration_date = models.DateTimeField(auto_now_add=False)
 
     # other fields ...
     #
@@ -98,7 +108,6 @@ class Car(BaseDateAuditModel):
 
     def __str__(self):
         return self.title
-
 
     class Meta:
         verbose_name = _('Car')
