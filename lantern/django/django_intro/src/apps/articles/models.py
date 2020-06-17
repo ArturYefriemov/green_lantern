@@ -49,7 +49,7 @@ class City(models.Model):
 
 
 class Restaurant(models.Model):
-    restaurant_id = models.AutoField(primar_key=True)
+    restaurant_id = models.AutoField(primary_key=True)
     restaurant_name = models.CharField(max_length=30)
     restaurant_address = models.CharField(max_length=60, blank=True, null=False)
     restaurant_number = models.CharField(max_length=13, unique=True, blank=True, null=False)
@@ -78,7 +78,7 @@ class Restaurant(models.Model):
 
 
 class Menu(models.Model):
-    menu_id = models.AutoField(primar_key=True)
+    menu_id = models.AutoField(primary_key=True)
     menu_name = models.CharField(max_length=50)
 
     class Meta:
@@ -87,7 +87,7 @@ class Menu(models.Model):
 
 
 class Dish(models.Model):
-    dish_id = models.AutoField(primar_key=True)
+    dish_id = models.AutoField(primary_key=True)
     dish_name = models.CharField(max_length=50)
     ingredients = models.TextField(blank=True, null=False)
     weight = models.IntegerField(blank=True, null=False)
@@ -120,7 +120,7 @@ class RestaurantMenu(models.Model):
 
 
 class Employee(models.Model):
-    employee_id = models.AutoField(primar_key=True)
+    employee_id = models.AutoField(primary_key=True)
     employee_first_name = models.CharField(max_length=30, blank=False, null=False)
     employee_last_name = models.CharField(max_length=30, blank=False, null=False)
     employee_birthday = models.DateField(blank=False, null=False)
