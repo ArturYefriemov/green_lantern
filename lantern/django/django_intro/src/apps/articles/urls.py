@@ -14,4 +14,5 @@ urlpatterns = [
     path('success/', TemplateView.as_view(template_name="pages/success.html"), name='success_url'),
     path('json/<int:id>', article_json, name='json'),
     path('json_list/', articles_list_json, name='json_list')
+
 ]

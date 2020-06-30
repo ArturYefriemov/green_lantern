@@ -52,3 +52,4 @@ def article_json(request, id):
 
 def articles_list_json(request):
     return JsonResponse(list(Article.objects.all().values()), safe=False)
+
