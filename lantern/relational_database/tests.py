@@ -44,7 +44,6 @@ class TestSQLQueries(unittest.TestCase):
                 cursor.execute(f"DROP ROLE {user}")
             conn.commit()
 
-
     @staticmethod
     def create_test_database_and_role(conn):
         with conn.cursor() as cursor:

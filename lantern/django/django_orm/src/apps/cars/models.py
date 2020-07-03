@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Index, UniqueConstraint
+from django.db.models import Index
 from django.utils.translation import gettext_lazy as _
 
 from apps.cars.managers import CarManager, CarQuerySet
@@ -7,7 +7,7 @@ from common.models import BaseDateAuditModel
 
 
 class Color(models.Model):
-    name = models.CharField(max_length=32, unique=True)
+    name = models.CharField(max_length=30, unique=True)
 
     class Meta:
         indexes = [
@@ -22,7 +22,7 @@ class Color(models.Model):
 
 
 class CarBrand(models.Model):
-    name = models.CharField(max_length=32, unique=True)
+    name = models.CharField(max_length=30, unique=True)
     logo = models.ImageField(null=True, blank=False)
 
     class Meta:
@@ -71,10 +71,16 @@ class Car(BaseDateAuditModel):
     slug = models.SlugField(max_length=75)
     number = models.CharField(max_length=16, unique=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True)
-    # dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars')
 
+    #car_id = models.AutoField(primary_key=True)
+    color = models.ForeignKey(to='Color', on_delete=models.SET_NULL, null=True, blank=False)
+    dealer = models.ForeignKey(to='dealers.Dealer', on_delete=models.CASCADE, related_name='cars', null=True, blank=False)
     model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, blank=False)
     extra_title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Title second part'))
+    price = models.FloatField(null=False, blank=True)
+    doors = models.ImageField(blank=True, null=False)
+    fuel_type = models.CharField(max_length=30)
+    first_registration_date = models.DateField(auto_now_add=False, blank=False, null=True)
 
     # other fields ...
     #
@@ -98,7 +104,6 @@ class Car(BaseDateAuditModel):
 
     def __str__(self):
         return self.title
-
 
     class Meta:
         verbose_name = _('Car')
