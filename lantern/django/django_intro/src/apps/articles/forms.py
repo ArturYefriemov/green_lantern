@@ -11,3 +11,4 @@ class ArticleForm(ModelForm):
     class Meta:
         model = Article
         fields = ['title', 'body', 'author', 'tags']
+
