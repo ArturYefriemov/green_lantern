@@ -7,10 +7,15 @@ from mesite.core import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('signup/', views.signup, name='signup'),
-    path('secret/', views.secret_page, name='secret'),
-    path('secret2/', views.secret_page2, name='secret2'),
-    path('upload/', views.upload, name='upload'),
+    # path('upload/', views.upload, name='upload'),
+    path('books/<int:pk>/', views.delete_book, name='delete_book'),
+    path('books/', views.book_list, name='book_list'),
+    path('books/upload/', views.upload_book, name='upload_book'),
     path('accounts/', include('django.contrib.auth.urls')),
+
+    path('class/books/', views.BookListView.as_view(), name='class_book_list'),
+    path('class/books/upload/', views.UploadBookView.as_view(), name='class_upload_book'),
+
     path('admin/', admin.site.urls),
 ]
 

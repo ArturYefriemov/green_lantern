@@ -34,10 +34,10 @@
               </li>
               {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'secret' %}">Secret page</a>
+                    <a class="nav-link" href="{% url 'book_list' %}">Books</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'secret2' %}">Secret page 2</a>
+                    <a class="nav-link" href="{% url 'upload_book' %}">Upload books</a>
                 </li>
               {% endif %}
             </ul>
