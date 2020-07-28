@@ -1,0 +1,62 @@
+version: "3"
+services:
+  web:
+    build: ./web
+    expose:
+      - 8000
+    volumes:
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DEBUG=FALSE
+
+  redis:
+    image: "redis:alpine"
+
+  celery:
+    build: ./web
+    command: celery -A app worker -l info
+    volumes:
+      - ./web/app:/app
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    environment:
+      - DEBUG=FALSE
+
+  celery-beat:
+    build: ./web
+    command: celery -A app beat -l info
+    volumes:
+      - ./web/app:/app
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    environment:
+      - DEBUG=FALSE
+
+  db:
+    image: postgres:10-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/vol/web/static
+      - media_volume:/vol/web/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
