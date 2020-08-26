@@ -1,160 +1,47 @@
 import os
-import joblib
-import numpy as np
-import pandas as pd
-
-from flask import Flask, flash, request, jsonify, abort, redirect, url_for, render_template, send_file
-from markupsafe import escape
 from werkzeug.utils import secure_filename
+from flask import Flask, flash, request, redirect, send_file, render_template
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, FileField
-from wtforms.validators import DataRequired
+from .validator import valid_url_check
 
-app = Flask(__name__)
-
-knn = joblib.load('knn.joblib')
-
-
-@app.route('/')
-def hello():
-    print(1 + 2)
-    return 'Hello my very best friend!!!!'
-
-
-@app.route('/user/<username>')
-def show_user_profile(username):
-    username = float(username) ** 2
-    return 'User %s' % escape(username)
-
-
-def mean(numbers):
-    return float(sum(numbers)) / max(len(numbers), 1)
-
-
-@app.route('/avg/<nums>')
-def avg(nums):
-    nums = nums.split(',')
-    nums = [float(num) for num in nums]
-    nums_mean = mean(nums)
-    print(nums_mean)
-    return str(nums_mean)
-
-
-@app.route('/iris/<param>')
-def iris(param):
-    try:
-        param = param.split(',')
-        param = [float(num) for num in param]
-
-        param = np.array(param).reshape(1, -1)
-        predict = knn.predict(param)
-
-        return str(predict)
-    except ValueError:
-        return redirect(url_for('bad_request'))
-
-
-@app.route('/show_img')
-def show_image():
-    return '<img src="/static/Irissetosa1.jpg" alt="Flower">'
-
-
-@app.route('/badrequest400')
-def bad_request():
-    return abort(400)
-
-
-@app.route('/iris_post', methods=['POST'])
-def add_message():
-    try:
-        content = request.get_json()
-
-        param = content['flower'].split(',')
-        param = [float(num) for num in param]
-
-        param = np.array(param).reshape(1, -1)
-        predict = knn.predict(param)
-
-        predict = {'class': str(predict[0])}
-    except ValueError:
-        return redirect(url_for('bad_request'))
-
-    return jsonify(predict)
-
-
-app.config.update(dict(
-    SECRET_KEY="powerful secretkey",
-    WTF_CSRF_SECRET_KEY="a csrf secret key"
-))
-
-
-class MyForm(FlaskForm):
-    name = StringField('name', validators=[DataRequired()])
-    file = FileField()
-
-
-@app.route('/submit', methods=('GET', 'POST'))
-def submit():
-    form = MyForm()
-    if form.validate_on_submit():
-        print(form.name.data)
-
-        f = form.file.data
-        filename = form.name.data + '.csv'
-        # f.save(os.path.join(
-        #     filename
-        # ))
-        df = pd.read_csv(f, header=None)
-        print(df.head())
-
-        predict = knn.predict(df)
-
-        result = pd.DataFrame(predict)
-        result.to_csv(filename, index=False)
-
-        return send_file(filename,
-                         mimetype='text/csv',
-                         attachment_filename=filename,
-                         as_attachment=True)
-
-    return render_template('submit.html', form=form)
-
-
-UPLOAD_FOLDER = ''
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-
+UPLOAD_FOLDER = 'uploads/'
+# app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/upload', methods=['GET', 'POST'])
+# Upload API
+@app.route('/uploadfile', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
+            print('no file')
             return redirect(request.url)
         file = request.files['file']
         # if user does not select file, browser also
-        # submit an empty part without filename
+        # submit a empty part without filename
         if file.filename == '':
-            flash('No selected file')
+            print('no filename')
             return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename + 'uploaded')
+        else:
+            filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return 'file uploaded'
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+            print("saved file successfully")
+            # send file name as parameter to downlad
+            return redirect('/downloadfile/' + filename)
+    return render_template('upload_file.html')
+
+
+# Download API
+@app.route("/downloadfile/<filename>", methods=['GET'])
+def download_file(filename):
+    return render_template('download.html', value=filename)
+
+
+@app.route('/return-files/<filename>')
+def return_files_tut(filename):
+    if filename:
+        return valid_url_check()
+    file_path = UPLOAD_FOLDER + filename
+    return send_file(file_path, as_attachment=True, attachment_filename='')
