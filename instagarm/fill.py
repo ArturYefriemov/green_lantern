@@ -1,14 +1,29 @@
 import csv
 import json
 import math
-from pprint import pprint
 import subprocess
 import time
 
 with open('followers.json', 'r') as f:
     followers = json.load(f)
 
-command_template = """curl 'https://www.instagram.com/{username}/?__a=1' -H 'pragma: no-cache' -H 'cookie: ds_user_id=5802924775; mid=Wlcy5QAEAAHjIpWdSStiUxb6Alq2; mcd=3; fbm_124024574287414=base_domain=.instagram.com; shbid=12189; ig_cb=1; datr=8RwpW26vPMlKFy71tY9xUaXL; csrftoken=ablLyNKzr5IEJDf96RKcb1JCLfvpmqKF; csrftoken=vHscIy3LQ3wFWnasxFramXjivISwDrB7; sessionid=5802924775%3AhVW56t3YGfTxF7%3A16; rur=VLL; shbts=1553170380.1821196; urlgen="{{\"89.17.61.234\": 201825\054 \"185.79.103.87\": 202173\054 \"176.59.45.101\": 12958}}:1h73B8:aAY7VtjjYv8-9hdmyWGOnOU9fBQ"' -H 'x-ig-app-id: 936619743392459' -H 'accept-encoding: gzip, deflate, br' -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8,ru;q=0.7' -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36' -H 'accept: */*' -H 'cache-control: no-cache' -H 'authority: www.instagram.com' -H 'x-requested-with: XMLHttpRequest' -H 'x-instagram-gis: dca0d7a694ce95c68bdb9298443cd7aa' -H 'referer: https://www.instagram.com/kukhterinaev/' --compressed > temp.json"""
+command_template = """curl 'https://www.instagram.com/{username}/?__a=1' \
+  -H 'authority: www.instagram.com' \
+  -H 'pragma: no-cache' \
+  -H 'cache-control: no-cache' \
+  -H 'accept: */*' \
+  -H 'x-ig-www-claim: hmac.AR0idzJi1QWbCkupOEA54oOk9hKgc7DW15x2CREC3SwOXQqu' \
+  -H 'x-requested-with: XMLHttpRequest' \
+  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36' \
+  -H 'x-ig-app-id: 936619743392459' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'referer: https://www.instagram.com/mike_korchinsky/?hl=ru' \
+  -H 'accept-language: ru-UA,ru;q=0.9,uk-UA;q=0.8,uk;q=0.7,ru-RU;q=0.6,en-US;q=0.5,en;q=0.4' \
+  -H 'cookie: ig_did=AC44DC06-BD7B-4CB1-8C01-E453189DCCF9; mid=X0Y49QAEAAHdPIEVtK8dI7w51biC; csrftoken=xKOfq5ITjMDuwAohsu2HcDvemZypa25J; ds_user_id=17224569441; sessionid=17224569441%3AZ7QyCseqzhcbWf%3A28; shbid=10104; shbts=1598437630.9104533; rur=ATN; urlgen="{{\"93.73.230.11\": 25229}}:1kAz9S:Fr3UydFLmLZ4YC1u0h0V68P1VLA"' \
+  -H 'authorization: Token f66c10830dd6f96591c2d2ff24316401c4d1e82b' \
+  --compressed > temp.json"""
 
 index = 0
 followers_filled = []
@@ -61,4 +76,4 @@ with open('followers_filled.csv', 'w', newline='') as f:
             1 if user["last_photos_posted_in_one_day"] else 0
         ])
 
-print('#готоводело')
+print('#Done')
