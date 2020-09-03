@@ -8,7 +8,7 @@ class Quiz(models.Model):
     image = models.ImageField()
     slug = models.SlugField(blank=True)
     roll_out = models.BooleanField(default=False)
-    timestamp = models.DateTimeFieldField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['timestamp', ]
@@ -42,7 +42,7 @@ class QuizTaker(models.Model):
     score = models.IntegerField(default=0)
     completed = models.BooleanField(default=False)
     date_finished = models.DateTimeField()
-    timestamp = models.DateTimeFieldField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.email
