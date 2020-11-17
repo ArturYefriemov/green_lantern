@@ -140,7 +140,7 @@ class MovieShotsAdmin(admin.ModelAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    list_display = ("id", "movie", "ip")
+    list_display = ("id", "star", "movie", "ip")
     list_display_links = ("movie",)
 
 
